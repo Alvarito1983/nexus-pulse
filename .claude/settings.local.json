@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/e/Claude/NEXUS/nexus-watcher/backend/src/**)",
+      "Read(//c/Users/afrag/**)",
+      "Bash(cygpath:*)"
+    ]
+  }
+}

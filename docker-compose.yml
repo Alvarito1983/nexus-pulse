@@ -1,0 +1,36 @@
+name: nexus-pulse
+
+services:
+  nexus-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    container_name: nexus-pulse-proxy
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CONTAINERS: 1
+      INFO: 1
+      POST: 1
+      ALLOW_START: 1
+      ALLOW_STOP: 1
+      ALLOW_RESTARTS: 1
+
+  nexus-pulse:
+    build: .
+    container_name: nexus-pulse
+    restart: unless-stopped
+    depends_on:
+      - nexus-proxy
+    volumes:
+      - pulse-data:/app/data
+    environment:
+      DOCKER_HOST: tcp://nexus-proxy:2375
+      PORT: 3002
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      POLL_INTERVAL: ${POLL_INTERVAL:-30}
+    ports:
+      - "9092:3002"
+
+volumes:
+  pulse-data:
