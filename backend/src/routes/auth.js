@@ -1,19 +1,21 @@
 const router = require('express').Router();
 const crypto = require('crypto');
+const store  = require('../store');
 
 const sessions = new Map();
-const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'admin';
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password)
     return res.status(400).json({ ok: false, error: 'Username and password required' });
-  if (username !== ADMIN_USER || password !== ADMIN_PASS)
+
+  const user = store.getUserByUsername(username);
+  if (!user || !store.verifyPassword(password, user.passwordHash))
     return res.status(401).json({ ok: false, error: 'Invalid credentials' });
+
   const token = crypto.randomBytes(32).toString('hex');
-  sessions.set(token, { username, role: 'admin', createdAt: Date.now() });
-  res.json({ ok: true, token, user: { username, role: 'admin' } });
+  sessions.set(token, { username: user.username, role: user.role, createdAt: Date.now() });
+  res.json({ ok: true, token, user: { username: user.username, role: user.role } });
 });
 
 router.post('/logout', (req, res) => {

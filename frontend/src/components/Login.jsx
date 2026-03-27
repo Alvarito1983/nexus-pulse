@@ -52,13 +52,6 @@ export default function Login({ onLogin }) {
 
   return (
     <div style={{ minHeight: '100vh', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <style>{`
-        @media (max-width: 700px) {
-          .login-left { display: none !important; }
-          .login-right { width: 100% !important; padding: 32px 24px !important; border-radius: 0 !important; }
-          .login-card { max-width: 100% !important; border-radius: 0 !important; min-height: 100vh !important; }
-        }
-      `}</style>
       <div style={{ position: 'fixed', top: 20, right: 24 }}><LangSelector /></div>
       <div className="login-card" style={{ display: 'flex', width: '100%', maxWidth: 900, minHeight: 480, borderRadius: 16, overflow: 'hidden', border: `1px solid ${s.border}` }}>
         {/* Left */}
@@ -98,7 +91,7 @@ export default function Login({ onLogin }) {
               {loading ? t('signingIn') : t('signIn')}
             </button>
           </form>
-          <p style={{ marginTop: 24, fontSize: 11, color: s.muted, textAlign: 'center' }}>NEXUS Pulse v1.0.0</p>
+          <p style={{ marginTop: 24, fontSize: 11, color: s.muted, textAlign: 'center' }}>NEXUS Pulse v1.1.0</p>
         </div>
       </div>
     </div>

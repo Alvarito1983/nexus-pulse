@@ -7,13 +7,16 @@ export default function App() {
   const [user, setUser] = useState(() => {
     try {
       const u = JSON.parse(localStorage.getItem('pulse-user'));
-      return u?.username || u || null;
+      if (!u) return null;
+      return typeof u === 'string' ? { username: u, role: 'admin' } : u;
     } catch { return null; }
   });
 
   function handleLogin(tok, userObj) {
     setToken(tok);
-    setUser(userObj?.username || userObj);
+    const u = typeof userObj === 'string' ? { username: userObj, role: 'admin' } : userObj;
+    setUser(u);
+    localStorage.setItem('pulse-user', JSON.stringify(u));
   }
 
   function handleLogout() {

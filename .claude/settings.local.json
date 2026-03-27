@@ -3,7 +3,18 @@
     "allow": [
       "Read(//mnt/e/Claude/NEXUS/nexus-watcher/backend/src/**)",
       "Read(//c/Users/afrag/**)",
-      "Bash(cygpath:*)"
+      "Bash(cygpath:*)",
+      "Bash(find E:/Claude/nexus-pulse E:/Claude/nexus-watcher -name *user* -o -name *User*)",
+      "Bash(find E:/Claude/NEXUS -name *.jsx)",
+      "Bash(find E:/Claude/NEXUS -name *.js -path */routes/*)",
+      "Bash(docker compose:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker rm:*)",
+      "Bash(curl -s http://localhost:9092/health)",
+      "Bash(curl -s http://localhost:9091/health)",
+      "Bash(curl -s -X POST http://localhost:9092/api/auth/login -H \"Content-Type: application/json\" -d '{\"\"username\"\":\"\"admin\"\",\"\"password\"\":\"\"admin\"\"}')",
+      "Bash(curl -s -X POST http://localhost:9091/api/auth/login -H \"Content-Type: application/json\" -d '{\"\"username\"\":\"\"admin\"\",\"\"password\"\":\"\"admin\"\"}')",
+      "Bash(docker build:*)"
     ]
   }
 }

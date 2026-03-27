@@ -16,7 +16,7 @@ services:
       ALLOW_RESTARTS: 1
 
   nexus-pulse:
-    build: .
+    image: afraguas1983/nexus-pulse:latest
     container_name: nexus-pulse
     restart: unless-stopped
     depends_on:

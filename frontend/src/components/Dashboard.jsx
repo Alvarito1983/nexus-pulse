@@ -104,37 +104,11 @@ export default function Dashboard({ token, user, onLogout }) {
   const monitorTypes = ['web', 'tcp', 'dns', 'database', 'api'];
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: s.bg, color: s.text }}>
-      <style>{`
-        @media (max-width: 768px) {
-          .pulse-sidebar { transform: translateX(-100%); transition: transform 0.25s ease; }
-          .pulse-sidebar.open { transform: translateX(0); }
-          .pulse-main { margin-left: 0 !important; }
-          .pulse-stats { grid-template-columns: repeat(2, 1fr) !important; }
-          .pulse-hamburger { display: flex !important; }
-          .pulse-overlay { display: block !important; }
-        }
-        .pulse-hamburger { display: none; position: fixed; top: 12px; left: 12px; z-index: 200; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px; cursor: pointer; align-items: center; justify-content: center; }
-        .pulse-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 15; }
-        .pulse-sidebar { transition: transform 0.25s ease; }
-      `}</style>
-
-      {/* Hamburger button (mobile only) */}
-      <button className="pulse-hamburger" onClick={() => setSidebarOpen(true)}>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect y="3" width="20" height="2" rx="1" fill="#e6edf3"/>
-          <rect y="9" width="20" height="2" rx="1" fill="#e6edf3"/>
-          <rect y="15" width="20" height="2" rx="1" fill="#e6edf3"/>
-        </svg>
-      </button>
-
-      {/* Overlay (mobile only) */}
-      <div className={`pulse-overlay${sidebarOpen ? ' pulse-overlay-visible' : ''}`}
-        style={{ display: sidebarOpen ? 'block' : 'none' }}
-        onClick={() => setSidebarOpen(false)} />
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative', background: s.bg, color: s.text }}>
+      <div className={`sidebar-overlay${sidebarOpen ? ' visible' : ''}`} onClick={() => setSidebarOpen(false)} />
 
       {/* Sidebar */}
-      <div className={`pulse-sidebar${sidebarOpen ? ' open' : ''}`} style={{ width: 220, background: s.surface, borderRight: `1px solid ${s.border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 20 }}>
+      <div className={`nexus-sidebar${sidebarOpen ? ' open' : ''}`} style={{ width: 220, flexShrink: 0, background: s.surface, borderRight: `1px solid ${s.border}`, display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div style={{ padding: '18px 16px', borderBottom: `1px solid ${s.border}` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <PulseLogo size={32} />
@@ -185,9 +159,14 @@ export default function Dashboard({ token, user, onLogout }) {
       </div>
 
       {/* Main */}
-      <div className="pulse-main" style={{ flex: 1, marginLeft: 220, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div className="nexus-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        {/* Topbar */}
+        <header style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', borderBottom: `1px solid ${s.border}`, background: s.bg, flexShrink: 0, gap: 10 }}>
+          <button className="hamburger" onClick={() => setSidebarOpen(v => !v)} style={{ background: 'transparent', border: `1px solid ${s.border}`, borderRadius: 6, color: s.muted, fontSize: '1em', cursor: 'pointer', padding: '6px 10px', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>☰</button>
+          <span style={{ fontSize: '1em', fontWeight: 600 }}>{NAV.find(n => n.id === tab)?.label || ''}</span>
+        </header>
         {/* Stats bar */}
-        <div className="pulse-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: s.border, borderBottom: `1px solid ${s.border}` }}>
+        <div className="pulse-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: s.border, borderBottom: `1px solid ${s.border}`, flexShrink: 0 }}>
           {[
             { label: t('totalContainers'), value: status?.totalContainers ?? '—', color: s.text },
             { label: t('running'),         value: status?.running ?? '—',          color: status?.running > 0 ? s.success : s.text },
@@ -202,7 +181,7 @@ export default function Dashboard({ token, user, onLogout }) {
         </div>
 
         {/* Content */}
-        <div style={{ padding: '24px 28px', flex: 1 }}>
+        <div className="nexus-content" style={{ padding: '24px 28px', flex: 1, overflow: 'auto' }}>
           {tab === 'containers' && <ContainersView containers={containers} onAction={load} onToast={showToast} isAdmin={true} />}
           {monitorTypes.includes(tab) && <MonitorsView type={tab} monitors={monitors.filter(m => m.type === tab)} onAction={load} onToast={showToast} />}
           {tab === 'history' && <HistoryView events={events} onClear={async () => {
@@ -211,7 +190,7 @@ export default function Dashboard({ token, user, onLogout }) {
             showToast(t('historyCleared'));
             load();
           }} s={s} />}
-          {tab === 'settings' && <SettingsView onToast={showToast} />}
+          {tab === 'settings' && <SettingsView onToast={showToast} user={user} />}
         </div>
       </div>
 

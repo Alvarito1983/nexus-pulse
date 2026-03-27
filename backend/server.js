@@ -7,6 +7,7 @@ const containersRouter = require('./src/routes/containers');
 const monitorsRouter = require('./src/routes/monitors');
 const { router: authRouter, sessions } = require('./src/routes/auth');
 const { router: settingsRouter, load: loadSettings } = require('./src/routes/settings');
+const usersRouter = require('./src/routes/users');
 const { startContainerMonitor } = require('./src/services/containerMonitor');
 const { startAllMonitors } = require('./src/services/monitorRunner');
 
@@ -26,13 +27,15 @@ app.use('/api', (req, res, next) => {
   if (req.path.startsWith('/auth')) return next();
   const token = req.headers['authorization']?.replace('Bearer ', '') || req.headers['x-api-key'];
   if (!token) return res.status(401).json({ ok: false, error: 'Unauthorized' });
-  if (sessions.has(token)) return next();
+  const session = sessions.get(token);
+  if (session) { req.user = session; return next(); }
   return res.status(401).json({ ok: false, error: 'Unauthorized' });
 });
 
 app.use('/api/containers', containersRouter);
 app.use('/api/monitors', monitorsRouter);
 app.use('/api/settings', settingsRouter);
+app.use('/api/users', usersRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'));
