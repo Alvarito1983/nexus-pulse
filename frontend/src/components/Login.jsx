@@ -52,10 +52,17 @@ export default function Login({ onLogin }) {
 
   return (
     <div style={{ minHeight: '100vh', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <style>{`
+        @media (max-width: 700px) {
+          .login-left { display: none !important; }
+          .login-right { width: 100% !important; padding: 32px 24px !important; border-radius: 0 !important; }
+          .login-card { max-width: 100% !important; border-radius: 0 !important; min-height: 100vh !important; }
+        }
+      `}</style>
       <div style={{ position: 'fixed', top: 20, right: 24 }}><LangSelector /></div>
-      <div style={{ display: 'flex', width: '100%', maxWidth: 900, minHeight: 480, borderRadius: 16, overflow: 'hidden', border: `1px solid ${s.border}` }}>
+      <div className="login-card" style={{ display: 'flex', width: '100%', maxWidth: 900, minHeight: 480, borderRadius: 16, overflow: 'hidden', border: `1px solid ${s.border}` }}>
         {/* Left */}
-        <div style={{ flex: 1, background: '#0a0f1e', padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="login-left" style={{ flex: 1, background: '#0a0f1e', padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <PulseLogo />
             <h1 style={{ marginTop: 24, fontSize: 32, fontWeight: 700, color: s.text, lineHeight: 1.2 }}>{t('appSubtitle')}</h1>
@@ -71,7 +78,7 @@ export default function Login({ onLogin }) {
           </div>
         </div>
         {/* Right */}
-        <div style={{ width: 380, background: s.surface, padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="login-right" style={{ width: 380, background: s.surface, padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h2 style={{ fontSize: 22, fontWeight: 600, color: s.text, marginBottom: 6 }}>{t('welcomeBack')}</h2>
           <p style={{ fontSize: 13, color: s.muted, marginBottom: 32 }}>{t('signInDesc')}</p>
           <form onSubmit={handleSubmit}>

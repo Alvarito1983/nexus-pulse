@@ -49,6 +49,7 @@ export default function Dashboard({ token, user, onLogout }) {
   const [checking, setChecking] = useState(false);
   const [tab, setTab] = useState('containers');
   const [toast, setToast] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const s = {
     bg: '#0d1117', surface: '#161b22', surface2: '#1c2128', border: '#30363d',
@@ -104,8 +105,36 @@ export default function Dashboard({ token, user, onLogout }) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: s.bg, color: s.text }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .pulse-sidebar { transform: translateX(-100%); transition: transform 0.25s ease; }
+          .pulse-sidebar.open { transform: translateX(0); }
+          .pulse-main { margin-left: 0 !important; }
+          .pulse-stats { grid-template-columns: repeat(2, 1fr) !important; }
+          .pulse-hamburger { display: flex !important; }
+          .pulse-overlay { display: block !important; }
+        }
+        .pulse-hamburger { display: none; position: fixed; top: 12px; left: 12px; z-index: 200; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px; cursor: pointer; align-items: center; justify-content: center; }
+        .pulse-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 15; }
+        .pulse-sidebar { transition: transform 0.25s ease; }
+      `}</style>
+
+      {/* Hamburger button (mobile only) */}
+      <button className="pulse-hamburger" onClick={() => setSidebarOpen(true)}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect y="3" width="20" height="2" rx="1" fill="#e6edf3"/>
+          <rect y="9" width="20" height="2" rx="1" fill="#e6edf3"/>
+          <rect y="15" width="20" height="2" rx="1" fill="#e6edf3"/>
+        </svg>
+      </button>
+
+      {/* Overlay (mobile only) */}
+      <div className={`pulse-overlay${sidebarOpen ? ' pulse-overlay-visible' : ''}`}
+        style={{ display: sidebarOpen ? 'block' : 'none' }}
+        onClick={() => setSidebarOpen(false)} />
+
       {/* Sidebar */}
-      <div style={{ width: 220, background: s.surface, borderRight: `1px solid ${s.border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 10 }}>
+      <div className={`pulse-sidebar${sidebarOpen ? ' open' : ''}`} style={{ width: 220, background: s.surface, borderRight: `1px solid ${s.border}`, display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 20 }}>
         <div style={{ padding: '18px 16px', borderBottom: `1px solid ${s.border}` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <PulseLogo size={32} />
@@ -125,12 +154,12 @@ export default function Dashboard({ token, user, onLogout }) {
 
         <nav style={{ flex: 1, padding: '6px 8px', overflowY: 'auto' }}>
           {NAV.map(item => (
-            <button key={item.id} onClick={() => setTab(item.id)}
+            <button key={item.id} onClick={() => { setTab(item.id); setSidebarOpen(false); }}
               style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: tab === item.id ? s.accentDim : 'none', border: 'none', borderLeft: `2px solid ${tab === item.id ? s.accent : 'transparent'}`, borderRadius: '0 8px 8px 0', color: tab === item.id ? s.text : s.muted, padding: '9px 12px', cursor: 'pointer', fontSize: 13, fontWeight: tab === item.id ? 600 : 400, textAlign: 'left', marginBottom: 2 }}>
               <span style={{ color: tab === item.id ? s.accent : s.dim, fontSize: 14, width: 18, textAlign: 'center', flexShrink: 0 }}>{item.icon}</span>
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge > 0 && (
-                <span style={{ background: item.id === 'containers' ? s.danger : s.danger, color: '#fff', borderRadius: 10, padding: '1px 6px', fontSize: 10, fontWeight: 700 }}>{item.badge}</span>
+                <span style={{ background: s.danger, color: '#fff', borderRadius: 10, padding: '1px 6px', fontSize: 10, fontWeight: 700 }}>{item.badge}</span>
               )}
             </button>
           ))}
@@ -156,9 +185,9 @@ export default function Dashboard({ token, user, onLogout }) {
       </div>
 
       {/* Main */}
-      <div style={{ flex: 1, marginLeft: 220, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div className="pulse-main" style={{ flex: 1, marginLeft: 220, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         {/* Stats bar */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: s.border, borderBottom: `1px solid ${s.border}` }}>
+        <div className="pulse-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: s.border, borderBottom: `1px solid ${s.border}` }}>
           {[
             { label: t('totalContainers'), value: status?.totalContainers ?? '—', color: s.text },
             { label: t('running'),         value: status?.running ?? '—',          color: status?.running > 0 ? s.success : s.text },
