@@ -322,17 +322,28 @@ export function useLang() {
 export const LangSelector = ({ style = {} }) => {
   const lang = useLang();
   const btn = (l) => ({
-    background: lang === l ? '#30363d' : 'none',
-    border: '1px solid',
-    borderColor: lang === l ? '#3b82f6' : 'transparent',
-    borderRadius: 4, padding: '2px 8px', cursor: 'pointer',
-    fontSize: 12, color: lang === l ? '#3b82f6' : '#8b949e',
-    fontWeight: lang === l ? 600 : 400,
+    padding: '4px 8px',
+    background: lang === l ? 'var(--bg-overlay)' : 'transparent',
+    border: 'none',
+    borderRadius: 'var(--radius-sm)',
+    cursor: 'pointer',
+    fontSize: 'var(--text-xs)',
+    fontWeight: lang === l ? 'var(--weight-medium)' : 'var(--weight-normal)',
+    color: lang === l ? 'var(--text-primary)' : 'var(--text-muted)',
+    fontFamily: 'var(--font-sans)',
+    transition: 'all var(--transition-fast)',
   });
   return (
-    <div style={{ display: 'flex', gap: 4, ...style }}>
-      <button onClick={() => setLang('en')} style={btn('en')}>EN</button>
-      <button onClick={() => setLang('es')} style={btn('es')}>ES</button>
+    <div style={{
+      display: 'flex', gap: 2,
+      background: 'var(--bg-elevated)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 'var(--radius-md)',
+      padding: 2,
+      ...style,
+    }}>
+      <button onClick={() => setLang('en')} style={btn('en')}>🇬🇧 EN</button>
+      <button onClick={() => setLang('es')} style={btn('es')}>🇪🇸 ES</button>
     </div>
   );
 };

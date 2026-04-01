@@ -89,11 +89,17 @@ Open **http://localhost:9092** — default credentials: `admin` / `admin`
 - PWA support
 - Session-based auth with Admin/Viewer roles
 
-### v1.1.0 _(coming soon)_
-- Response time charts (last 24h per monitor)
-- Incident history per monitor (when it went down, how long)
-- Status page — public read-only overview
-- NEXUS Hub integration (SSO + centralised user management)
+### v1.2.0 — Dark Premium redesign ✅
+- Complete UI overhaul — Dark Premium design language (Linear/Vercel aesthetic), blue accent `#3b82f6`
+- Unified layout with NEXUS ecosystem standard
+- Login: centered card with blue radial glow, `fadeSlideUp` animation
+- Sidebar: dark surface, Lucide icons, blue active state
+- TopBar: 56px, `backdrop-filter: blur`
+- Stat cards with semantic colors and skeleton loading
+- Shared components: `Button`, `Badge`, `Card`, `Input`, `EmptyState`, `Skeleton`, `HistoryBar`
+- Typography: Inter + JetBrains Mono
+- Version dynamic from `package.json` via `__APP_VERSION__`
+- Responsive: hamburger sidebar on mobile
 
 ### v2.0.0 — NEXUS Ecosystem 🚀 _(Q4 2026)_
 
