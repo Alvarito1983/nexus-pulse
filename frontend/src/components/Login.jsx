@@ -2,16 +2,13 @@ import { useState } from 'react';
 import { t, useLang, LangSelector } from './i18n.jsx';
 
 const PulseLogo = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"
-       width="52" height="52" style={{borderRadius:10}}>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="52" height="52" style={{ borderRadius: 10, flexShrink: 0 }}>
     <rect width="192" height="192" rx="40" fill="#001233"/>
     <rect x="18" y="18" width="72" height="72" rx="14" fill="#3b82f6"/>
     <rect x="102" y="18" width="72" height="72" rx="14" fill="#3b82f6" opacity="0.55"/>
     <rect x="18" y="102" width="72" height="72" rx="14" fill="#3b82f6" opacity="0.3"/>
-    <rect x="102" y="102" width="72" height="72" rx="14"
-          fill="none" stroke="#3b82f6" strokeWidth="5"/>
-    <text x="138" y="158" fontFamily="Arial Black, Arial, sans-serif"
-          fontSize="56" fontWeight="900" fill="#3b82f6" textAnchor="middle">P</text>
+    <rect x="102" y="102" width="72" height="72" rx="14" fill="none" stroke="#3b82f6" strokeWidth="5"/>
+    <text x="138" y="158" fontFamily="Arial Black, Arial, sans-serif" fontSize="56" fontWeight="900" fill="#3b82f6" textAnchor="middle">P</text>
     <line x1="90" y1="54" x2="102" y2="54" stroke="#3b82f6" strokeWidth="5" opacity="0.45" strokeLinecap="round"/>
     <line x1="54" y1="90" x2="54" y2="102" stroke="#3b82f6" strokeWidth="5" opacity="0.45" strokeLinecap="round"/>
     <line x1="90" y1="138" x2="102" y2="138" stroke="#3b82f6" strokeWidth="5" opacity="0.45" strokeLinecap="round"/>
@@ -25,8 +22,8 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const s = { bg: '#0d1117', surface: '#161b22', border: '#30363d', accent: '#3b82f6', text: '#e6edf3', muted: '#8b949e' };
+  const [userFocused, setUserFocused] = useState(false);
+  const [passFocused, setPassFocused] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -51,48 +48,175 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ position: 'fixed', top: 20, right: 24 }}><LangSelector /></div>
-      <div className="login-card" style={{ display: 'flex', width: '100%', maxWidth: 900, minHeight: 480, borderRadius: 16, overflow: 'hidden', border: `1px solid ${s.border}` }}>
-        {/* Left */}
-        <div className="login-left" style={{ flex: 1, background: '#0a0f1e', padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--bg-base)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Radial blue glow */}
+      <div style={{
+        position: 'absolute',
+        top: '30%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 600,
+        height: 600,
+        background: 'radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Language selector */}
+      <div style={{ position: 'fixed', top: 20, right: 24, zIndex: 10 }}>
+        <LangSelector />
+      </div>
+
+      {/* Login card */}
+      <div className="animate-in" style={{
+        width: '100%',
+        maxWidth: 380,
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border-default)',
+        borderRadius: 'var(--radius-xl)',
+        boxShadow: 'var(--shadow-lg)',
+        padding: 40,
+        margin: '0 16px',
+        position: 'relative',
+        zIndex: 1,
+      }}>
+        {/* Logo + header */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32, gap: 16 }}>
+          <PulseLogo />
+          <div style={{ textAlign: 'center' }}>
+            <h1 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--weight-semibold)', color: 'var(--text-primary)', marginBottom: 6 }}>
+              {t('welcomeBack')}
+            </h1>
+            <p style={{ fontSize: 'var(--text-base)', color: 'var(--text-secondary)' }}>
+              {t('signInDesc')}
+            </p>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <PulseLogo />
-            <h1 style={{ marginTop: 24, fontSize: 32, fontWeight: 700, color: s.text, lineHeight: 1.2 }}>{t('appSubtitle')}</h1>
-            <p style={{ marginTop: 16, color: s.muted, fontSize: 14, lineHeight: 1.7 }}>{t('monitor')}</p>
+            <label style={{
+              display: 'block',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              marginBottom: 6,
+              fontWeight: 'var(--weight-medium)',
+            }}>
+              {t('username')}
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              onFocus={() => setUserFocused(true)}
+              onBlur={() => setUserFocused(false)}
+              autoFocus
+              style={{
+                width: '100%',
+                background: 'var(--bg-base)',
+                border: `1px solid ${userFocused ? 'var(--accent)' : 'var(--border-default)'}`,
+                borderRadius: 'var(--radius-md)',
+                padding: '10px 14px',
+                color: 'var(--text-primary)',
+                fontSize: 'var(--text-base)',
+                outline: 'none',
+                transition: 'border-color var(--transition-fast)',
+                fontFamily: 'var(--font-sans)',
+              }}
+            />
           </div>
-          <div style={{ display: 'flex', gap: 24 }}>
-            {[{l: t('realTime'), s: 'Live'}, {l: t('autoRecover'), s: 'Docker'}, {l: t('alerts'), s: 'Telegram'}].map(f => (
-              <div key={f.l}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: s.accent }}>{f.l}</div>
-                <div style={{ fontSize: 11, color: s.muted }}>{f.s}</div>
-              </div>
-            ))}
+          <div>
+            <label style={{
+              display: 'block',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              marginBottom: 6,
+              fontWeight: 'var(--weight-medium)',
+            }}>
+              {t('password')}
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onFocus={() => setPassFocused(true)}
+              onBlur={() => setPassFocused(false)}
+              style={{
+                width: '100%',
+                background: 'var(--bg-base)',
+                border: `1px solid ${passFocused ? 'var(--accent)' : 'var(--border-default)'}`,
+                borderRadius: 'var(--radius-md)',
+                padding: '10px 14px',
+                color: 'var(--text-primary)',
+                fontSize: 'var(--text-base)',
+                outline: 'none',
+                transition: 'border-color var(--transition-fast)',
+                fontFamily: 'var(--font-sans)',
+              }}
+            />
           </div>
-        </div>
-        {/* Right */}
-        <div className="login-right" style={{ width: 380, background: s.surface, padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h2 style={{ fontSize: 22, fontWeight: 600, color: s.text, marginBottom: 6 }}>{t('welcomeBack')}</h2>
-          <p style={{ fontSize: 13, color: s.muted, marginBottom: 32 }}>{t('signInDesc')}</p>
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: 12, color: s.muted, marginBottom: 6 }}>{t('username')}</label>
-              <input type="text" value={username} onChange={e => setUsername(e.target.value)} autoFocus
-                style={{ width: '100%', background: s.bg, border: `1px solid ${s.border}`, borderRadius: 8, padding: '10px 14px', color: s.text, fontSize: 14, outline: 'none' }} />
+
+          {error && (
+            <div style={{
+              background: 'rgba(239,68,68,0.08)',
+              border: '1px solid rgba(239,68,68,0.25)',
+              borderRadius: 'var(--radius-md)',
+              padding: '10px 14px',
+              color: 'var(--color-danger)',
+              fontSize: 'var(--text-sm)',
+            }}>
+              {error}
             </div>
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: 'block', fontSize: 12, color: s.muted, marginBottom: 6 }}>{t('password')}</label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                style={{ width: '100%', background: s.bg, border: `1px solid ${s.border}`, borderRadius: 8, padding: '10px 14px', color: s.text, fontSize: 14, outline: 'none' }} />
-            </div>
-            {error && <div style={{ background: '#2d1a1a', border: '1px solid #5a2a2a', borderRadius: 6, padding: '10px 14px', color: '#f85149', fontSize: 13, marginBottom: 16 }}>{error}</div>}
-            <button type="submit" disabled={loading}
-              style={{ width: '100%', background: s.accent, color: '#fff', border: 'none', borderRadius: 8, padding: '11px', fontSize: 14, fontWeight: 600, cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.7 : 1 }}>
-              {loading ? t('signingIn') : t('signIn')}
-            </button>
-          </form>
-          <p style={{ marginTop: 24, fontSize: 11, color: s.muted, textAlign: 'center' }}>NEXUS Pulse v1.1.0</p>
-        </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              background: 'var(--accent)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 'var(--radius-md)',
+              padding: '11px',
+              fontSize: 'var(--text-base)',
+              fontWeight: 'var(--weight-semibold)',
+              cursor: loading ? 'default' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+              transition: 'opacity var(--transition-fast), box-shadow var(--transition-fast)',
+              boxShadow: loading ? 'none' : '0 0 0 0 var(--accent-glow)',
+              fontFamily: 'var(--font-sans)',
+              marginTop: 4,
+            }}
+            onMouseEnter={e => { if (!loading) e.target.style.boxShadow = 'var(--shadow-accent)'; }}
+            onMouseLeave={e => { e.target.style.boxShadow = 'none'; }}
+          >
+            {loading ? t('signingIn') : t('signIn')}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <p style={{
+          marginTop: 24,
+          fontSize: 'var(--text-xs)',
+          color: 'var(--text-muted)',
+          textAlign: 'center',
+          fontFamily: 'var(--font-mono)',
+        }}>
+          NEXUS Pulse v{__APP_VERSION__}
+        </p>
       </div>
     </div>
   );
